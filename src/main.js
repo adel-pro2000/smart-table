@@ -22,7 +22,6 @@ let indexes;
  */
 function collectState() {
     const state = processFormData(new FormData(sampleTable.container));
-
     const rowsPerPage = parseInt(state.rowsPerPage);
     const page = parseInt(state.page ?? 1);
 
@@ -37,7 +36,7 @@ function collectState() {
  * @param {HTMLButtonElement?} action
  */
 async function render(action) {
-    let state = collectState();
+    const state = collectState();
     let query = {};
     // @todo: использование
     
@@ -102,7 +101,7 @@ async function init() {
 }
 
 init()
-    .then(render)
+    .then(() => render())
     .catch(error => {
         console.error('Ошибка инициализации:', error);
     });
