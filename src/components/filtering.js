@@ -1,25 +1,22 @@
-import {createComparison, defaultRules} from "../lib/compare.js";
-
-// @todo: #4.3 — настроить компаратор
-const compare = createComparison(defaultRules);
-
-export function initFiltering(elements, indexes) {
+export function initFiltering(elements) {
     // @todo: #4.1 — заполнить выпадающие списки опциями
-    Object.keys(indexes).forEach((elementName) => {
-        elements[elementName].append(
-            ...Object.values(indexes[elementName]).map(name => {
-                const option = document.createElement('option');
+    const updateIndexes = (elements, indexes) => {
+        Object.keys(indexes).forEach(elementName => {
+            elements[elementName].append(
+                ...Object.values(indexes[elementName]).map(name => {
+                    const option = document.createElement('option');
 
-                option.value = name;
-                option.textContent = name;
+                    option.textContent = name;
+                    option.value = name;
 
-                return option;
-            })
-        );
-    });
+                    return option;
+                })
+            );
+        });
+    };
 
-    return (data, state, action) => {
-        // @todo: #4.2 — обработать очистку поля
+    const applyFiltering = (query, state, action) => {
+        // Очистка конкретного поля
         if (action?.name === 'clear') {
             const field = action.dataset.field;
             const input = action.parentElement.querySelector('input');
@@ -30,13 +27,27 @@ export function initFiltering(elements, indexes) {
             }
         }
 
+        const filter = {};
 
-        // @todo: #4.5 — отфильтровать данные используя компаратор
-        const filterState = {
-            ...state,
-            total: [state.totalFrom, state.totalTo]
-        };
+        Object.keys(elements).forEach(key => {
+            const element = elements[key];
 
-        return data.filter(row => compare(row, filterState));
-    }
+            if (
+                element &&
+                ['INPUT', 'SELECT'].includes(element.tagName) &&
+                element.value
+            ) {
+                filter[`filter[${element.name}]`] = element.value;
+            }
+        });
+
+        return Object.keys(filter).length
+            ? Object.assign({}, query, filter)
+            : query;
+    };
+
+    return {
+        updateIndexes,
+        applyFiltering
+    };
 }
