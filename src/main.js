@@ -34,12 +34,11 @@ function collectState() {
 }
 
 /**
- * Перерисовка состояния таблицы при любых изменениях
  * @param {HTMLButtonElement?} action
  */
 async function render(action) {
-    const state = collectState(); // состояние полей из таблицы
-    let query = {}; // копируем для последующего изменения
+    let state = collectState();
+    let query = {};
     // @todo: использование
     
     query = applySearching(query, state, action);
@@ -102,4 +101,8 @@ async function init() {
     });
 }
 
-init().then(render);
+init()
+    .then(render)
+    .catch(error => {
+        console.error('Ошибка инициализации:', error);
+    });

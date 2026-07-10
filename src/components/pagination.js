@@ -11,7 +11,6 @@ export const initPagination = ({pages, fromRow, toRow, totalRows}, createPage) =
         const limit = state.rowsPerPage;
         let page = state.page;
 
-        // Обрабатываем нажатия на кнопки пагинации
         if (action) {
             switch (action.name) {
                 case 'prev':
@@ -38,16 +37,11 @@ export const initPagination = ({pages, fromRow, toRow, totalRows}, createPage) =
         });
     };
 
-    /**
-     * Перерисовывает пагинатор после получения данных
-     */
     const updatePagination = (total, { page, limit }) => {
         pageCount = Math.ceil(total / limit);
 
-        // Получаем номера страниц, которые нужно показать
         const visiblePages = getPages(page, pageCount, 5);
 
-        // Создаём кнопки страниц
         pages.replaceChildren(
             ...visiblePages.map(pageNumber => {
                 const el = pageTemplate.cloneNode(true);
@@ -60,7 +54,6 @@ export const initPagination = ({pages, fromRow, toRow, totalRows}, createPage) =
             })
         );
 
-        // Обновляем информацию под таблицей
         fromRow.textContent = total === 0
             ? 0
             : (page - 1) * limit + 1;
